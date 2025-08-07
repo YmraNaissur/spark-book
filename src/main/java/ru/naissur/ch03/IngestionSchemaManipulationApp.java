@@ -15,13 +15,13 @@ public class IngestionSchemaManipulationApp {
   }
 
   private void start() {
-    // Создание сеанса Spark
+    // Создание сеанса Spark.
     SparkSession spark = SparkSession.builder()
         .appName("Restaurants in Wake County, NC")
         .master("local")
         .getOrCreate();
 
-    // Создание фрейма данных
+    // Создание фрейма данных.
     Dataset<Row> df = spark.read()
         .format("csv")
         .option("header", true)
