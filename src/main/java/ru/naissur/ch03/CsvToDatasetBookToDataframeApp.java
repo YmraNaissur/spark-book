@@ -1,5 +1,10 @@
 package ru.naissur.ch03;
 
+import static org.apache.spark.sql.functions.concat;
+import static org.apache.spark.sql.functions.expr;
+import static org.apache.spark.sql.functions.lit;
+import static org.apache.spark.sql.functions.to_date;
+
 import java.io.Serializable;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -38,6 +43,22 @@ public class CsvToDatasetBookToDataframeApp implements Serializable {
     System.out.println("*** Books are now in a dataset of books");
     bookDs.show(5);
     bookDs.printSchema();
+
+    Dataset<Row> df2 = bookDs.toDF();
+    df2 = df2.withColumn(
+        "releaseDateAsString",
+        concat(
+            expr("releaseDate.year + 1900"), lit("-"),
+            expr("releaseDate.month + 1"), lit("-"),
+            df2.col("releaseDate.date")));
+
+    df2 = df2.withColumn(
+            "releaseDateAsDate",
+            to_date(df2.col("releaseDateAsString"), "yyyy-M-d"))
+        .drop("releaseDateAsString");
+    System.out.println("*** Books are back in a dataframes");
+    df2.show(5);
+    df2.printSchema();
   }
 
 }
